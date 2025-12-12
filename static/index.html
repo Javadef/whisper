@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whisper AI - Transcription & Translation</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                    <path d="M12 8v8M8 12h8"/>
+                </svg>
+                <h1>Whisper AI</h1>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="upload">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                    </svg>
+                    Upload File
+                </button>
+                
+                <button class="nav-item" data-tab="stream">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    Live Stream
+                </button>
+                
+                <button class="nav-item" data-tab="chat">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    AI Chat
+                </button>
+                
+                <button class="nav-item" data-tab="history">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    History
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div id="system-status" class="status-card">
+                    <div class="status-item">
+                        <span class="status-label">GPU:</span>
+                        <span class="status-value" id="gpu-status">Loading...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Whisper:</span>
+                        <span class="status-value" id="whisper-status">Loading...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">LLM:</span>
+                        <span class="status-value" id="llm-status">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Tab -->
+            <div id="upload-tab" class="tab-content active">
+                <div class="tab-header">
+                    <h2>Upload & Transcribe</h2>
+                    <p>Upload audio or video files for transcription and translation</p>
+                </div>
+                
+                <div class="upload-section">
+                    <div class="upload-area" id="upload-area">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                        </svg>
+                        <p class="upload-text">Drag & drop your file here or click to browse</p>
+                        <p class="upload-hint">Supports: MP4, MKV, MP3, WAV, FLAC (max 500MB)</p>
+                        <input type="file" id="file-input" accept="audio/*,video/*" hidden>
+                    </div>
+                    
+                    <div class="options-grid">
+                        <div class="option-group">
+                            <label>Translation</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="translate" value="english" checked>
+                                    <span>English</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="translate" value="russian">
+                                    <span>Russian</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label>
+                                <input type="checkbox" id="word-timestamps">
+                                <span>Word-level timestamps</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button id="transcribe-btn" class="btn btn-primary" disabled>
+                        <span>Transcribe</span>
+                    </button>
+                </div>
+                
+                <div id="progress-section" class="progress-section hidden">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <p class="progress-text" id="progress-text">Processing...</p>
+                </div>
+                
+                <div id="results-section" class="results-section hidden">
+                    <div class="result-header">
+                        <h3>Results</h3>
+                        <button id="copy-btn" class="btn btn-secondary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                    
+                    <div class="result-info">
+                        <span><strong>Language:</strong> <span id="detected-lang"></span></span>
+                        <span><strong>Duration:</strong> <span id="duration"></span></span>
+                        <span><strong>Processing Time:</strong> <span id="proc-time"></span></span>
+                    </div>
+                    
+                    <div class="result-tabs">
+                        <button class="result-tab active" data-result="transcription">Original</button>
+                        <button class="result-tab" data-result="english">English</button>
+                        <button class="result-tab" data-result="russian">Russian</button>
+                    </div>
+                    
+                    <div class="result-content">
+                        <div id="result-transcription" class="result-text active"></div>
+                        <div id="result-english" class="result-text"></div>
+                        <div id="result-russian" class="result-text"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stream Tab -->
+            <div id="stream-tab" class="tab-content">
+                <div class="tab-header">
+                    <h2>Live Stream Transcription</h2>
+                    <p>Transcribe live streams from YouTube, Twitch, RTMP, and more</p>
+                </div>
+                
+                <div class="stream-section">
+                    <div class="input-group">
+                        <label>Stream URL</label>
+                        <input type="text" id="stream-url" placeholder="https://www.youtube.com/watch?v=..." class="input-field">
+                    </div>
+                    
+                    <div class="options-grid">
+                        <div class="option-group">
+                            <label>Quality</label>
+                            <select id="stream-quality" class="select-field">
+                                <option value="best">Best</option>
+                                <option value="720p">720p</option>
+                                <option value="480p">480p</option>
+                                <option value="worst">Worst (Fastest)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label>Chunk Duration (seconds)</label>
+                            <input type="number" id="chunk-duration" value="30" min="10" max="60" class="input-field">
+                        </div>
+                    </div>
+                    
+                    <button id="stream-start-btn" class="btn btn-primary">
+                        <span>Start Streaming</span>
+                    </button>
+                    
+                    <button id="stream-stop-btn" class="btn btn-danger hidden">
+                        <span>Stop Streaming</span>
+                    </button>
+                </div>
+                
+                <div id="stream-output" class="stream-output">
+                    <div class="stream-header">
+                        <h4>Live Transcription</h4>
+                        <span id="stream-status" class="status-badge">Idle</span>
+                    </div>
+                    <div id="stream-text" class="stream-text"></div>
+                </div>
+            </div>
+
+            <!-- Chat Tab -->
+            <div id="chat-tab" class="tab-content">
+                <div class="tab-header">
+                    <h2>AI Assistant</h2>
+                    <p>Ask questions about your transcriptions or anything else</p>
+                </div>
+                
+                <!-- Pinned Context Indicator -->
+                <div id="pinned-context" class="pinned-context hidden">
+                    <div class="pinned-info">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <span>Context: <strong id="pinned-filename"></strong></span>
+                        <span class="pinned-preview" id="pinned-preview"></span>
+                    </div>
+                    <button class="pinned-remove" onclick="removePinnedContext()" title="Remove context">&times;</button>
+                </div>
+                
+                <div class="chat-container">
+                    <div id="chat-messages" class="chat-messages"></div>
+                    
+                    <div class="chat-input-container">
+                        <textarea id="chat-input" placeholder="Ask me anything..." class="chat-input" rows="3"></textarea>
+                        <button id="chat-send-btn" class="btn btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history-tab" class="tab-content">
+                <div class="tab-header">
+                    <h2>Transcription History</h2>
+                    <p>View your recent transcriptions</p>
+                </div>
+                
+                <div id="history-list" class="history-list">
+                    <div class="empty-state">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <p>No transcriptions yet</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for History Item -->
+    <div id="history-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeHistoryModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Transcription</h3>
+                <button class="modal-close" onclick="closeHistoryModal()">&times;</button>
+            </div>
+            <div class="modal-info">
+                <span><strong>Language:</strong> <span id="modal-lang"></span></span>
+                <span><strong>Duration:</strong> <span id="modal-duration"></span></span>
+                <span><strong>Date:</strong> <span id="modal-date"></span></span>
+            </div>
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="original">Original</button>
+                <button class="modal-tab" data-tab="english">English</button>
+                <button class="modal-tab" data-tab="russian">Russian</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-original" class="modal-text active"></div>
+                <div id="modal-english" class="modal-text"></div>
+                <div id="modal-russian" class="modal-text"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="copyModalText()">Copy Text</button>
+                <button class="btn btn-primary" onclick="useInChat()">Ask AI About This</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

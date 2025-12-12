@@ -1,0 +1,90 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Models (large files)
+models/*.gguf
+models/*.bin
+models/*.safetensors
+models/faster-whisper-*
+
+# Keep model directory structure
+!models/README.md
+!models/.gitkeep
+
+# Runtime directories
+uploads/*
+!uploads/.gitkeep
+outputs/*
+!outputs/.gitkeep
+stream_chunks/*
+!stream_chunks/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Additional ignores for large files, conda envs, and sensitive files
+*.crdownload
+*.gguf
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.bin
+miniconda3-pt/
+miniconda3/
+.env
+.env.*
+_venv/
+venv/
+.venv/
+uploads/
+outputs/
+stream_chunks/
+models/
