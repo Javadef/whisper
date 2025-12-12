@@ -85,6 +85,7 @@ miniconda3/
 _venv/
 venv/
 .venv/
+.venv311/
 uploads/
 outputs/
 stream_chunks/

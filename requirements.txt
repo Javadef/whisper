@@ -33,7 +33,7 @@ Jinja2
 llama_cpp_python==0.3.16
 lxml==6.0.2
 MarkupSafe
-mkl-service==2.4.0
+mkl-service==2.6.0
 mkl_fft
 mkl_random
 mpmath
@@ -65,9 +65,9 @@ starlette==0.50.0
 streamlink==8.0.0
 sympy==1.13.1
 tokenizers==0.22.1
-torch==2.5.1
-torchaudio==2.5.1
-torchvision==0.20.1
+torch==2.5.1+cu121
+torchaudio==2.5.1+cu121
+torchvision==0.20.1+cu121
 tqdm==4.67.1
 transformers==4.57.3
 trio==0.32.0
