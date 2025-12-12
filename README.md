@@ -60,45 +60,6 @@ pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements.txt
 ```
 
-## Ollama (Optional) — Local or Cloud LLM
-
-This project can use a local Ollama daemon or Ollama Cloud as a fallback LLM (via the `ollama` Python client).
-
-Local (recommended if you pulled a model):
-
-1. Install the native Ollama app from https://ollama.com/download (Windows installer or ZIP).
-2. Close and re-open your terminal so `ollama` is on your PATH.
-3. Verify the daemon is running and list models:
-
-```powershell
-ollama ps
-```
-
-4. Pull a model (example: `gemma3`):
-
-```powershell
-ollama pull gemma3
-ollama show gemma3
-```
-
-Cloud (if you want to use Ollama cloud models):
-
-1. Create an API key at https://ollama.com/settings/keys and set environment variables:
-
-```powershell
-setx OLLAMA_API_KEY "your_api_key_here"
-setx OLLAMA_URL "https://ollama.com"
-```
-
-2. Re-open terminal after setting env vars.
-
-Test the integration with the local Python client (example script below):
-
-```powershell
-# Write and run the test script included in the repository
-python test_llm.py
-```
-
 The repository also falls back to Ollama when a local GGUF model is not available — `app/services/llm_service.py` will use `app/services/ollama_service.py` automatically if needed.
 
 ## Running the Server
