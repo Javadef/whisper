@@ -81,6 +81,7 @@ miniconda3-pt/
 miniconda3/
 .env
 .env.*
+
 _venv/
 venv/
 .venv/
